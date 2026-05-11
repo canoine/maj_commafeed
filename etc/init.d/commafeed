@@ -1,0 +1,31 @@
+#!/sbin/openrc-run
+# Commafeed init service (gentoo without systemd)
+
+CFD_PIDFILE=${CFD_PIDFILE:=/var/run/${SVCNAME}.pid}
+
+depend() {
+        use logger dns
+        need net postgresql
+}
+
+start() {
+        ebegin "Starting ${SVCNAME}"
+        start-stop-daemon --start \
+            --exec "${CFD_JAVA}" \
+            --chdir "$CFD_REP" \
+            --user "$CFD_USER" \
+            --pidfile "${CFD_PIDFILE}" \
+            --background --make-pidfile \
+            --stdout-logger "/usr/bin/logger -t${SVCNAME}" \
+            --stderr-logger "/usr/bin/logger -t${SVCNAME}" \
+            -- ${CFD_COMMAND}
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping ${SVCNAME}"
+        start-stop-daemon --stop --exec "${CFD_JAVA}" \
+        --retry 10 \
+        --pidfile "${CFD_PIDFILE}" --quiet
+        eend $?
+}
