@@ -27,10 +27,10 @@ usage() {
 	Usage : ${0} [OPTION]
 
 	Options :
-	-h|--help :		Affiche cette aide
-	-c|--clean :		Supprime tous les fichiers en cache avant construction
-	-d|--debug :		Active le mode debug de maven
-	-s|--skiptests :	Désactive les tests après construction
+	-h|--help :       Show this help
+	-c|--clean :      Clean all the caches before building
+	-d|--debug :      Show the whole maven erro messages
+	-s|--skiptests :  Skip the tests during building
 
 	FIN
 	exit 1
