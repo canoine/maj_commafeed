@@ -1,20 +1,36 @@
 # maj_commafeed
-Commafeed update script
 
 This script :
-- makes an horodated archive of the running instance (jars + application.properties + this script itself),
+- makes a horodated archive of the running instance (jars + application.properties + this script itself),
 - deletes the oldests backups,
 - git pulls the Commafeed Github repo,
 - builds the instance,
 - installs the files,
 - restarts the service.
 
+---
+
 Prerequisites :
 - Commafeed prequisites (see https://github.com/Athou/commafeed#build-from-sources)
+- tar, unzip, git commands,
 - One system account with sufficient rights :
   - write into the backup directory,
   - write into the instance directory,
   - stop and start the instance's system service,
 
 I recommend a dedicated system account, distinct from the one used to launch the instance (so this one doesn't need write permissions). Note that, even if it can do everything, it's a very (very !) bad idea to use the root account.
+
+---
+
+You __must__ modify these variables to adapt the script to your system :
+
+`CFD_CHEMIN` = the Commafeed instance directory.<br>
+`CFD_GROUP` = the group of the system account which runs the Commafeed instance. The build system account should be a member of this group.<br>
+`CFB_CHEMIN` = the Commafeed building directory.<br>
+`CFD_DB` = the database type (can be one of h2, postgresql, mysql or mariadb).<br>
+`SAV_GRP` = the group of the system account which makes backups on your machine (you have one, don't you ?). The build system account should be a member of this group.<br>
+`SAV_CHEMIN` = the Commafeed backup directory.<br>
+`SVC_STOP` = the command to stop the system service (if sudo is needed, be sure the build account have the right to launch it).<br>
+`SVC_START` = the command to start the system service (if sudo is needed, be sure the build account have the right to launch it).<br>
+
 
