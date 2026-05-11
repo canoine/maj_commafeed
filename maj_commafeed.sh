@@ -8,6 +8,7 @@ CFD_GRP="${APP}"
 CFD_FIC="${APP}.jar"
 CFD_CONF="application.properties"
 CFB_CHEMIN="/var/local/commabuild"
+CFD_DB="postgresql"  # h2, postgresql, mysql or mariadb
 SAV_GRP="backup"
 SAV_CHEMIN="/var/backup/apps/${APP}"
 SAV_REP="${SAV_CHEMIN}/${APP}.$(date +%Y%m%d%H%M)"
@@ -83,7 +84,7 @@ do
 done
 
 FICCONF="${CFD_CHEMIN}/jar/current/config/${CFD_CONF}"
-FICARCH="$(find "${CFD_CHEMIN}/jar/" -type f -name "commafeed*postgresql*.zip")"
+FICARCH="$(find "${CFD_CHEMIN}/jar/" -type f -name "commafeed*${CFD_DB}*.zip")"
 if [ -f "${FICARCH}" ]
 then
 	mkdir -p "${SAV_REP}"
@@ -110,7 +111,7 @@ else
 fi
 
 # Construction
-"${MVN_CMD}" clean package -Ppostgresql "${MAVEN_EXTRA_OPTS}" ${MAVEN_EXTRA_EXTRA}
+"${MVN_CMD}" clean package -P${CFD_DB} "${MAVEN_EXTRA_OPTS}" ${MAVEN_EXTRA_EXTRA}
 
 FIC_ZIP="$(find "${CFB_CHEMIN}/src/${APP}/${APP}-server/target/" -type f -name "commafeed*postgresql*.zip")"
 
@@ -119,7 +120,6 @@ ${SVC_STOP}
 cd "${CFD_CHEMIN}/jar/"
 find . -print -delete
 mv "${FIC_ZIP}" ./
-#cp -p  "${FIC_ZIP}" ./
 "${UNZIP_CMD}" "$(basename "${FIC_ZIP}")"
 ln -s "$(find . -maxdepth 1 -type d -name "commafeed*")" current
 mkdir current/config
