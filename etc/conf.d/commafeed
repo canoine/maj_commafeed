@@ -1,0 +1,17 @@
+# Commafeed service config (gentoo without systemd)
+CFD_USER="commafeed"
+CFD_FICLOG="/var/log/commafeed.log"
+CFD_REP="/var/local/commafeed/jar/current/"
+CFD_JAR="quarkus-run.jar"
+CFD_JAVA="/usr/bin/java"
+CFD_COMMAND="-DINSTANCE=commafeed \
+        -Djava.net.preferIPv4Stack=true \
+        -Xmx256m \
+        -Xms20m  \
+        -XX:+UseG1GC \
+        -XX:+UseStringDeduplication \
+        -XX:-ShrinkHeapInSteps \
+        -XX:G1PeriodicGCInterval=10000 \
+        -XX:-G1PeriodicGCInvokesConcurrent \
+        -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 \
+        -jar $CFD_JAR"
