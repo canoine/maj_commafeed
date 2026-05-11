@@ -1,0 +1,2 @@
+# sudoers file for gentoo
+commabuild ALL=(root) NOPASSWD: /sbin/rc-service commafeed start, /sbin/rc-service commafeed stop
