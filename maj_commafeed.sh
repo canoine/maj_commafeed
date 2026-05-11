@@ -113,7 +113,7 @@ fi
 # Construction
 "${MVN_CMD}" clean package -P${CFD_DB} "${MAVEN_EXTRA_OPTS}" ${MAVEN_EXTRA_EXTRA}
 
-FIC_ZIP="$(find "${CFB_CHEMIN}/src/${APP}/${APP}-server/target/" -type f -name "commafeed*postgresql*.zip")"
+FIC_ZIP="$(find "${CFB_CHEMIN}/src/${APP}/${APP}-server/target/" -type f -name "commafeed*${CFD_DB}*.zip")"
 
 ${SVC_STOP}
 
