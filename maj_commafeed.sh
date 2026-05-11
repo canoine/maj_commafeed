@@ -9,6 +9,7 @@ CFD_FIC="${APP}.jar"
 CFD_CONF="application.properties"
 CFB_PATH="/var/local/commabuild"
 CFD_DB="postgresql"  # h2, postgresql, mysql or mariadb
+SAV_NB="6"
 SAV_GRP="backup"
 SAV_PATH="/var/backup/apps/${APP}"
 SAV_REP="${SAV_PATH}/${APP}.$(date +%Y%m%d%H%M)"
@@ -70,7 +71,9 @@ fi
 set -x
 
 # si /tmp est monté en noexec, certains modules ne sont pas d'accord
-export MAVEN_OPTS=-Djansi.tmpdir="${CFB_PATH}/.tmp"
+CFB_TMP="${CFB_PATH}/.tmp"
+[ -d "${CFB_TMP}" ] || mkdir -p "${CFB_TMP}"
+export MAVEN_OPTS=-Djansi.tmpdir="${CFB_TMP}"
 MAVEN_EXTRA_OPTS=-Dio.netty.native.workdir="${CFB_PATH}/.tmp"
 
 # c'est lourd, le javascript
@@ -78,7 +81,7 @@ MAVEN_EXTRA_OPTS=-Dio.netty.native.workdir="${CFB_PATH}/.tmp"
 export NODE_OPTIONS=--max_old_space_size=4096
 
 # Gestion des sauvegardes
-for rep in $(ls -1 "${SAV_PATH}/" | head -n -5)
+for rep in $(ls -1 "${SAV_PATH}/" | head -n -${SAV_NB})
 do
 	rm -vrf "${SAV_PATH}/${rep}"
 done
