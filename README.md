@@ -24,12 +24,12 @@ I recommend a dedicated system account, distinct from the one used to launch the
 
 You __must__ modify these variables to adapt the script to your system :
 
-`CFD_CHEMIN` = the Commafeed instance directory.<br>
+`CFD_PATH` = the Commafeed instance directory.<br>
 `CFD_GROUP` = the group of the system account which runs the Commafeed instance. The build system account should be a member of this group.<br>
-`CFB_CHEMIN` = the Commafeed building directory.<br>
+`CFB_PATH` = the Commafeed building directory.<br>
 `CFD_DB` = the database type (can be one of h2, postgresql, mysql or mariadb).<br>
 `SAV_GRP` = the group of the system account which makes backups on your machine (you have one, don't you ?). The build system account should be a member of this group.<br>
-`SAV_CHEMIN` = the Commafeed backup directory.<br>
+`SAV_PATH` = the Commafeed backup directory.<br>
 `SVC_STOP` = the command to stop the system service (if sudo is needed, be sure the build account have the right to launch it).<br>
 `SVC_START` = the command to start the system service (if sudo is needed, be sure the build account have the right to launch it).<br>
 

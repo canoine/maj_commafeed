@@ -3,15 +3,15 @@ set -uef -o pipefail
 
 # À adapter selon les besoins
 APP="commafeed"
-CFD_CHEMIN="/var/local/${APP}"
+CFD_PATH="/var/local/${APP}"
 CFD_GRP="${APP}"
 CFD_FIC="${APP}.jar"
 CFD_CONF="application.properties"
-CFB_CHEMIN="/var/local/commabuild"
+CFB_PATH="/var/local/commabuild"
 CFD_DB="postgresql"  # h2, postgresql, mysql or mariadb
 SAV_GRP="backup"
-SAV_CHEMIN="/var/backup/apps/${APP}"
-SAV_REP="${SAV_CHEMIN}/${APP}.$(date +%Y%m%d%H%M)"
+SAV_PATH="/var/backup/apps/${APP}"
+SAV_REP="${SAV_PATH}/${APP}.$(date +%Y%m%d%H%M)"
 UNZIP_CMD="/usr/bin/unzip"
 SVC_STOP="/usr/bin/sudo /sbin/rc-service ${APP} stop"
 SVC_START="/usr/bin/sudo /sbin/rc-service ${APP} start"
@@ -70,21 +70,21 @@ fi
 set -x
 
 # si /tmp est monté en noexec, certains modules ne sont pas d'accord
-export MAVEN_OPTS=-Djansi.tmpdir="${CFB_CHEMIN}/.tmp"
-MAVEN_EXTRA_OPTS=-Dio.netty.native.workdir="${CFB_CHEMIN}/.tmp"
+export MAVEN_OPTS=-Djansi.tmpdir="${CFB_PATH}/.tmp"
+MAVEN_EXTRA_OPTS=-Dio.netty.native.workdir="${CFB_PATH}/.tmp"
 
 # c'est lourd, le javascript
 # https://github.com/Athou/commafeed/issues/1971
 export NODE_OPTIONS=--max_old_space_size=4096
 
 # Gestion des sauvegardes
-for rep in $(ls -1 "${SAV_CHEMIN}/" | head -n -5)
+for rep in $(ls -1 "${SAV_PATH}/" | head -n -5)
 do
-	rm -vrf "${SAV_CHEMIN}/${rep}"
+	rm -vrf "${SAV_PATH}/${rep}"
 done
 
-FICCONF="${CFD_CHEMIN}/jar/current/config/${CFD_CONF}"
-FICARCH="$(find "${CFD_CHEMIN}/jar/" -type f -name "commafeed*${CFD_DB}*.zip")"
+FICCONF="${CFD_PATH}/jar/current/config/${CFD_CONF}"
+FICARCH="$(find "${CFD_PATH}/jar/" -type f -name "commafeed*${CFD_DB}*.zip")"
 if [ -f "${FICARCH}" ]
 then
 	mkdir -p "${SAV_REP}"
@@ -98,7 +98,7 @@ fi
 if [ ${CLEAN} -ne 0 ]
 then
 	# Nettoyage complet, au cas ou...
-	cd "${CFB_CHEMIN}"
+	cd "${CFB_PATH}"
 	rm -rf src/${APP}
 	rm -rf .cache .config .local .m2 .npm
 	cd src
@@ -106,24 +106,24 @@ then
 	cd "${APP}"
 else
 	# Mise a jour GIT
-	cd "${CFB_CHEMIN}/src/${APP}"
+	cd "${CFB_PATH}/src/${APP}"
 	"${GIT_CMD}" pull
 fi
 
 # Construction
 "${MVN_CMD}" clean package -P${CFD_DB} "${MAVEN_EXTRA_OPTS}" ${MAVEN_EXTRA_EXTRA}
 
-FIC_ZIP="$(find "${CFB_CHEMIN}/src/${APP}/${APP}-server/target/" -type f -name "commafeed*${CFD_DB}*.zip")"
+FIC_ZIP="$(find "${CFB_PATH}/src/${APP}/${APP}-server/target/" -type f -name "commafeed*${CFD_DB}*.zip")"
 
 ${SVC_STOP}
 
-cd "${CFD_CHEMIN}/jar/"
+cd "${CFD_PATH}/jar/"
 find . -print -delete
 mv "${FIC_ZIP}" ./
 "${UNZIP_CMD}" "$(basename "${FIC_ZIP}")"
 ln -s "$(find . -maxdepth 1 -type d -name "commafeed*")" current
 mkdir current/config
-cp -p "${CFB_CHEMIN}/${CFD_CONF}" current/config/
+cp -p "${CFB_PATH}/${CFD_CONF}" current/config/
 chgrp -R "${CFD_GRP}" .
 chmod -R u=rwX,g=rX,o= .
 
