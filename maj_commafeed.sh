@@ -30,8 +30,9 @@ usage() {
 
 	Options :
 	-h|--help :       Show this help
+	-b|--skipbackup : Skip backing up the current jar
 	-c|--clean :      Clean all the caches before building
-	-d|--debug :      Show the whole maven erro messages
+	-d|--debug :      Show the whole maven error messages
 	-s|--skiptests :  Skip the tests during building
 
 	FIN
@@ -39,6 +40,7 @@ usage() {
 }
 
 # Gestion des arguments
+BACKUP=1
 CLEAN=0
 MAVEN_EXTRA_EXTRA=""
 if [ ${#} -ne 0 ]
@@ -48,6 +50,10 @@ then
 		case ${1} in
 			-h|--help)
 				usage
+				;;
+			-b|--skipbackup)
+				BACKUP=0
+				shift
 				;;
 			-c|--clean)
 				CLEAN=1
@@ -81,21 +87,24 @@ MAVEN_EXTRA_OPTS=-Dio.netty.native.workdir="${CFB_PATH}/.tmp"
 export NODE_OPTIONS=--max_old_space_size=4096
 
 # Gestion des sauvegardes
-for rep in $(ls -1 "${SAV_PATH}/" | head -n -${SAV_NB})
-do
-	rm -vrf "${SAV_PATH}/${rep}"
-done
-
-FICCONF="${CFD_PATH}/jar/current/config/${CFD_CONF}"
-FICARCH="$(find "${CFD_PATH}/jar/" -type f -name "commafeed*${CFD_DB}*.zip")"
-if [ -f "${FICARCH}" ]
+if [ ${BACKUP} -ne 1 ]
 then
-	mkdir -p "${SAV_REP}"
-	cp -p "${FICARCH}" "${SAV_REP}/"
-	[ -f "${FICCONF}" ] && cp -p "${FICCONF}" "${SAV_REP}/"
-	cp -p "${0}" "${SAV_REP}/"
-	chgrp -R "${SAV_GRP}" "${SAV_REP}"
-	chmod -R u=rwX,g=rX,o= "${SAV_REP}"
+	for rep in $(ls -1 "${SAV_PATH}/" | head -n -${SAV_NB})
+	do
+		rm -vrf "${SAV_PATH}/${rep}"
+	done
+
+	FICCONF="${CFD_PATH}/jar/current/config/${CFD_CONF}"
+	FICARCH="$(find "${CFD_PATH}/jar/" -type f -name "commafeed*${CFD_DB}*.zip")"
+	if [ -f "${FICARCH}" ]
+	then
+		mkdir -p "${SAV_REP}"
+		cp -p "${FICARCH}" "${SAV_REP}/"
+		[ -f "${FICCONF}" ] && cp -p "${FICCONF}" "${SAV_REP}/"
+		cp -p "${0}" "${SAV_REP}/"
+		chgrp -R "${SAV_GRP}" "${SAV_REP}"
+		chmod -R u=rwX,g=rX,o= "${SAV_REP}"
+	fi
 fi
 
 if [ ${CLEAN} -ne 0 ]
