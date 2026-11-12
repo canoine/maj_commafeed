@@ -87,7 +87,7 @@ MAVEN_EXTRA_OPTS=-Dio.netty.native.workdir="${CFB_PATH}/.tmp"
 export NODE_OPTIONS=--max_old_space_size=4096
 
 # Gestion des sauvegardes
-if [ ${BACKUP} -ne 1 ]
+if [ ${BACKUP} -eq 1 ]
 then
 	for rep in $(ls -1 "${SAV_PATH}/" | head -n -${SAV_NB})
 	do
